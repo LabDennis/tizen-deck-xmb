@@ -1,0 +1,35 @@
+const {chromium}=require('playwright'),assert=require('node:assert/strict'),path=require('path'),{pathToFileURL}=require('url');
+(async()=>{const b=await chromium.launch({headless:true});try{
+ const page=await b.newPage({viewport:{width:1920,height:1080}}),errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.clock.install({time:new Date('2026-10-26T12:00:00Z')});
+ await page.goto(pathToFileURL(path.resolve(__dirname,'../src/index.html')).href);
+ await page.clock.runFor(2500);
+ await page.getByRole('button',{name:'Extras',exact:true}).click();await page.keyboard.press('ArrowDown');await page.keyboard.press('Enter');
+ assert.equal(await page.locator('#dialog-title').innerText(),'Uhr & Timer');
+ await page.keyboard.press('ArrowDown');await page.keyboard.press('Enter');
+ assert.equal(await page.locator('#dialog-title').innerText(),'Stoppuhr');
+ await page.keyboard.press('Enter');await page.clock.runFor(2200);
+ assert.match(await page.getByLabel('Stoppuhr',{exact:true}).innerText(),/00:02/);
+ await page.keyboard.press('ArrowDown');await page.keyboard.press('Enter');assert.equal(await page.locator('.time-laps li').count(),1);
+ await page.keyboard.press('ArrowUp');await page.keyboard.press('Enter');const paused=await page.getByLabel('Stoppuhr',{exact:true}).innerText();await page.clock.runFor(2000);assert.equal(await page.getByLabel('Stoppuhr',{exact:true}).innerText(),paused);
+ await page.keyboard.press('Escape');await page.keyboard.press('Enter');await page.getByRole('button',{name:'Countdown',exact:true}).click();
+ await page.getByLabel('Dauer in Minuten',{exact:true}).fill('0');await page.getByRole('button',{name:'Starten',exact:true}).click();assert.match(await page.locator('#dialog-text').innerText(),/1 bis 1440/);
+ await page.getByLabel('Dauer in Minuten',{exact:true}).fill('1');await page.getByRole('button',{name:'Starten',exact:true}).click();assert(await page.getByLabel('Dauer in Minuten',{exact:true}).isDisabled());
+ await page.clock.runFor(10000);await page.getByRole('button',{name:'Pause',exact:true}).click();const left=await page.getByLabel('Verbleibende Zeit',{exact:true}).innerText();await page.clock.runFor(20000);assert.equal(await page.getByLabel('Verbleibende Zeit',{exact:true}).innerText(),left);
+ await page.getByRole('button',{name:'Fortsetzen',exact:true}).click();
+ await page.evaluate(()=>{window.notices=0;new MutationObserver(()=>notices++).observe(document.getElementById('toast'),{childList:true});Object.defineProperty(document,'hidden',{configurable:true,get:()=>true});document.dispatchEvent(new Event('visibilitychange'));});
+ await page.clock.runFor(70000);assert.equal(await page.evaluate(()=>notices),0,'hidden app must defer its alert');
+ await page.evaluate(()=>{Object.defineProperty(document,'hidden',{configurable:true,get:()=>false});document.dispatchEvent(new Event('visibilitychange'));});
+ assert.match(await page.getByLabel('Verbleibende Zeit',{exact:true}).innerText(),/Abgelaufen/);assert.match(await page.locator('#toast').innerText(),/Countdown abgelaufen/);const notices=await page.evaluate(()=>notices);await page.clock.runFor(5000);assert.equal(await page.evaluate(()=>window.notices),notices,'finish alert must not repeat');
+ await page.getByRole('button',{name:'Zur Übersicht',exact:true}).click();await page.getByRole('button',{name:'Große Uhr',exact:true}).click();
+ const size=await page.locator('#dialog').boundingBox();assert.equal(size.width,1920);assert.equal(size.height,1080);assert.equal(await page.locator('.time-readout').count(),1);
+ await page.screenshot({path:process.env.TIME_SCREENSHOT||'/tmp/deck-time-tools.png'});
+ // Rapid close/reopen must not let an older queued close event stop the new clock.
+ const clockBefore=await page.locator('.time-digits').innerText();
+ await page.evaluate(()=>{document.getElementById('dialog').close();DeckTimeTools.open();Array.from(document.querySelectorAll('#dialog-actions button')).find(b=>b.textContent==='Große Uhr').click();});
+ await page.clock.runFor(65000);assert.notEqual(await page.locator('.time-digits').innerText(),clockBefore,'reopened clock must keep ticking');
+ await page.keyboard.press('Escape');await page.waitForFunction(()=>!document.getElementById('dialog').classList.contains('time-fullscreen'));
+ assert.equal(await page.locator('.time-fullscreen').count(),0,'clock layout cannot affect other dialogs');
+ await page.keyboard.press('Enter');assert.equal(await page.locator('#dialog-title').innerText(),'Uhr & Timer');
+ assert.deepEqual(errors,[]);console.log('Time tools: remote navigation, stopwatch/lap/pause, validation, hidden countdown alert exactly once, fullscreen clock cleanup passed');
+}finally{await b.close();}})().catch(e=>{console.error(e);process.exitCode=1;});

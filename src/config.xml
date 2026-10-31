@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<widget xmlns="http://www.w3.org/ns/widgets" xmlns:tizen="http://tizen.org/ns/widgets" id="https://local.invalid/tizen-xmb" version="1.0.0" viewmodes="maximized">
+<tizen:application id="TizenDeckX.XMB" package="TizenDeckX" required_version="5.5"/>
+<access origin="http://127.0.0.1:8844" subdomains="false"/><tizen:privilege name="http://tizen.org/privilege/internet"/>
+<content src="index.html"/><name>Tizen Deck XMB</name><icon src="icon.png"/>
+<tizen:privilege name="http://tizen.org/privilege/filesystem.read"/>
+<tizen:privilege name="http://tizen.org/privilege/filesystem.write"/>
+<tizen:privilege name="http://tizen.org/privilege/tv.window"/>
+<tizen:privilege name="http://tizen.org/privilege/tv.audio"/>
+<tizen:profile name="tv-samsung"/>
+<tizen:privilege name="http://tizen.org/privilege/application.launch"/>
+<tizen:privilege name="http://tizen.org/privilege/application.info"/>
+<tizen:setting screen-orientation="landscape" context-menu="disable" background-support="disable" encryption="disable" install-location="auto" hwkey-event="enable" pointing-device-support="enable"/>
+</widget>

@@ -1,0 +1,78 @@
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden}body{background:#061b3d;color:#fff;font-family:Arial,Helvetica,sans-serif;font-weight:400}.ambient{position:absolute;top:0;right:0;bottom:0;left:0;inset:0;overflow:hidden;background:radial-gradient(ellipse at 48% 90%,#2e7ba6 0%,#123d6c 35%,#071b3d 72%,#030b20 100%)}.wave{position:absolute;width:165%;height:70%;left:-28%;top:47%;border-radius:44% 55% 45% 50%;border-top:2px solid #c1eaff75;box-shadow:0 -8px 22px #8bd6ff22,inset 0 12px 24px #b8eaff15;transform:rotate(-8deg);animation:drift 20s ease-in-out infinite alternate}.two{top:49%;opacity:.65;animation-delay:-6s;border-top-width:1px}.three{top:52%;opacity:.35;animation-delay:-12s;box-shadow:0 -30px 60px #99dcff33}@keyframes drift{to{transform:translateY(-4vh) rotate(5deg)}}header{position:absolute;right:6vw;top:8vh;font-size:1.5vw;text-shadow:0 2px 4px #0008;letter-spacing:.06em}header>span{display:none}nav{position:absolute;top:25vh;left:30vw;width:0;height:12vh}.category{position:absolute;width:8vw;margin-left:-4vw;border:0;background:none;color:inherit;opacity:.38;padding:0;left:0;transition:transform .28s cubic-bezier(.2,.75,.25,1),opacity .25s;cursor:pointer}.symbol{display:block}.symbol img{width:100%;height:100%;object-fit:contain}.category .symbol{width:4.4vw;height:4.4vw;margin:0 auto;filter:drop-shadow(0 2px 2px #0007)}.category .label{display:block;text-align:center;margin-top:1.5vh;font-size:1.25vw;white-space:nowrap;opacity:0}.category.selected{opacity:1}.category.selected .symbol{filter:drop-shadow(0 0 10px #ffffff9c)}.category.selected .label{opacity:1;text-shadow:0 0 8px #fff9}#items{position:absolute;left:30vw;top:48vh;width:55vw;height:0}.item{position:absolute;left:-3vw;width:55vw;display:flex;align-items:center;border:0;background:none;color:inherit;opacity:.4;padding:0;text-align:left;font:inherit;cursor:pointer;top:0;transition:transform .24s cubic-bezier(.2,.75,.25,1),opacity .24s;white-space:nowrap;text-shadow:0 2px 5px #0008}.item .symbol{transition:padding .24s,filter .24s;width:6vw;height:6vw;flex-shrink:0;margin-right:3vw;padding:1.1vw}.item>span:nth-child(2){font-size:1.7vw;letter-spacing:.02em}.item small{display:none;font-size:1vw;opacity:.65;margin-top:1vh}.item.selected{opacity:1}.item.selected .symbol{padding:.25vw;filter:drop-shadow(0 0 10px #ffffff85)}.item.selected small{display:block}.category:focus-visible,.item:focus-visible{outline:1px solid #fff8;outline-offset:8px}aside{display:none}footer{position:absolute;bottom:5vh;right:6vw;display:flex;gap:2vw;font-size:1vw;color:#d7e4f0;opacity:.55}footer span:first-child,footer span:nth-child(2),#platform{display:none}#toast{position:absolute;bottom:12vh;left:50%;transform:translateX(-50%);background:#061930dd;border:1px solid #8da9c066;padding:2vh 3vw;border-radius:4px;display:none;max-width:80vw;font-size:1.4vw}dialog{background:#10283cf5;color:#fff;border:1px solid #759db8;border-radius:5px;padding:3vw;max-width:50vw;font-size:1.5vw}dialog::backdrop{background:#0008}dialog p{line-height:1.6;white-space:pre-line;color:#bed0de}dialog button{font:inherit;color:white;background:#25445d;border:1px solid #678da8;border-radius:3px;padding:1vh 2vw}body.still .wave{animation:none}@media(prefers-reduced-motion:reduce){.wave{animation:none}*{transition:none!important}}
+
+#items{animation:appear .25s ease-out}@keyframes appear{from{opacity:0}to{opacity:1}}
+
+#splash{position:fixed;top:0;right:0;bottom:0;left:0;inset:0;z-index:10;background:#020b1b;display:flex;align-items:center;justify-content:center;pointer-events:none;animation:splash-out 1.6s ease forwards}#splash span{font-size:2.3vw;letter-spacing:.45em;font-weight:300;color:#eef6ff;text-shadow:0 0 25px #94cdfb77}@keyframes splash-out{0%,35%{opacity:1}100%{opacity:0;visibility:hidden}}@media(prefers-reduced-motion:reduce){#splash{display:none}}
+
+.item.past{opacity:0;visibility:hidden;pointer-events:none}
+
+#splash{animation:splash-out 2.1s ease forwards;overflow:hidden;background:radial-gradient(ellipse at 50% 60%,#0a2846,#020b1b 65%)}
+#splash span{animation:logo-reveal 1.7s cubic-bezier(.2,.7,.2,1) both;z-index:1}
+.intro-arc{position:absolute;top:0;right:0;bottom:0;left:0;inset:0;width:100%;height:100%;opacity:0;animation:arc-glow 1.8s ease both;filter:drop-shadow(0 0 12px #9cdeff)}
+.intro-arc path{fill:none;stroke:#addfff;stroke-width:1.2;stroke-dasharray:1500;stroke-dashoffset:1500;animation:arc-draw 1.7s cubic-bezier(.2,.6,.4,1) forwards}
+@keyframes logo-reveal{0%,12%{opacity:0;transform:scale(1.1) translateY(6px);letter-spacing:.65em;filter:blur(3px)}50%,80%{opacity:1;transform:scale(1);letter-spacing:.45em;filter:blur(0)}100%{opacity:1;transform:scale(.98);filter:blur(0)}}
+@keyframes arc-glow{0%{opacity:0}30%,60%{opacity:.65}100%{opacity:0}}
+@keyframes arc-draw{to{stroke-dashoffset:-1500}}
+@keyframes splash-out{0%,65%{opacity:1}100%{opacity:0;visibility:hidden}}
+@media(prefers-reduced-motion:reduce){#splash{display:none}.intro-arc,.intro-arc path,#splash span{animation:none}}
+
+/* Native pointer preserves correct hit-testing in the TV browser. */
+body,body *{cursor:none!important}body.pointer-active,body.pointer-active *{cursor:auto!important}body.pointer-active button{cursor:pointer!important}
+header{display:flex;align-items:center;gap:1.2vw;border:1px solid #d7f5ff44;border-radius:3px;padding:.45vw .8vw;background:#7bc5dd10;box-shadow:inset 0 0 8px #c6f8ff16;min-width:25vw;font-size:1.25vw;letter-spacing:.02em}
+header>span{display:inline}#input-status{margin-right:auto;font-size:1.15vw;white-space:nowrap}.clock-mark{font-size:1.65vw}button:focus-visible{outline:2px solid #d6f4ff;outline-offset:6px}
+
+header #input-status{display:none}header{min-width:0;gap:1vw;right:0;padding-right:6vw;border-right:0;border-radius:3px 0 0 3px}
+
+.clock-mark{width:1.8vw;height:1.8vw;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;filter:drop-shadow(0 1px 2px #0008)}.clock-pivot{fill:currentColor;stroke:none}
+
+#device-status{position:absolute;bottom:5vh;left:4vw;font-size:1vw;color:#d7e4f0;opacity:.65;max-width:65vw;white-space:nowrap}#dialog-actions{display:flex;flex-direction:column;gap:.6vh;max-height:45vh;overflow-y:auto;margin-bottom:2vh}#dialog-actions button{text-align:left}
+
+/* TV Chromium must show remote/programmatic focus without :focus-visible. */
+dialog button:focus{outline:3px solid #e4f8ff;outline-offset:-3px;background:#467995;box-shadow:0 0 16px #b5eaff70;color:#fff}
+
+#dialog-actions{position:relative;display:block;overscroll-behavior:contain;padding:3px}#dialog-actions button{display:block;width:100%;min-height:5vh;margin-bottom:.6vh;flex-shrink:0}dialog{max-height:85vh;overflow:hidden}
+
+#dialog-actions input{display:block;width:100%;font:inherit;padding:1vh 2vw;margin:1vh 0;background:#10283c;color:white;border:1px solid #759db8}#dialog-actions input:focus{outline:3px solid #d6f4ff}
+
+/* Stop compositing work while another TV app is in front. */
+body.app-hidden .wave,body.app-hidden #splash,body.app-hidden #splash *{animation-play-state:paused!important}
+
+/* Keep animation on transforms; avoid per-frame icon layout and shadow interpolation. */
+.item .symbol{padding:1.1vw;transition:transform .2s ease;}
+.item.selected .symbol{padding:1.1vw;transform:scale(1.45);}
+body[data-performance="balanced"] .wave{box-shadow:none;}
+body[data-performance="balanced"] .wave.three{display:none;}
+body[data-performance="eco"] .wave,body[data-performance="direct"] .wave{animation:none;box-shadow:none;}
+body[data-performance="eco"] .wave:not(.one),body[data-performance="direct"] .wave:not(.one){display:none;}
+body[data-performance="eco"] .category,body[data-performance="eco"] .item,body[data-performance="eco"] .item .symbol{transition-duration:.12s;}
+
+/* Bound dialogs to the TV viewport; the action list scrolls instead of the close button. */
+dialog{position:fixed;top:8vh;left:25vw;right:auto;bottom:auto;margin:0;width:50vw;max-width:50vw;max-height:84vh;padding:3vh 3vw}
+dialog[open]{display:flex;flex-direction:column}
+dialog h2{flex-shrink:0;margin:0 0 1vh}
+dialog p{flex-shrink:0;margin:1vh 0 2vh;font-size:1.3vw;line-height:1.45;max-height:20vh;overflow:auto}
+dialog #dialog-actions{flex:1 1 auto;min-height:0;max-height:43vh;margin-bottom:1vh}
+dialog #close{flex-shrink:0;align-self:flex-start}
+dialog button:focus{color:#fff!important;-webkit-text-fill-color:#fff!important;background:#467995!important}
+
+/* Offscreen rows are hidden by the renderer; cheap selection effects on the default profile. */
+body[data-performance="eco"] .category .symbol,body[data-performance="eco"] .item .symbol,body[data-performance="direct"] .category .symbol,body[data-performance="direct"] .item .symbol{filter:none}
+#dialog-actions button:disabled{opacity:.4;cursor:default}
+
+/* Inactive cached menus retain their native nodes, without focus or transitions. */
+.item[aria-hidden="true"]{visibility:hidden!important;pointer-events:none;transition:none}
+
+/* Keep moving icons/rows inside the viewport. overflow:hidden on body alone
+   still lets focus scroll the root document to offscreen transformed children. */
+main{position:fixed;left:0;top:0;width:100vw;height:100vh;overflow:hidden}
+nav{left:0;top:20vh;width:100%;height:25vh;overflow:hidden}
+.category{left:30vw;top:5vh}
+.category[aria-hidden="true"]{visibility:hidden;pointer-events:none;transition:none}
+
+/* Cache the static eco background as one layer. Per-icon layer hints perform
+   worse on the M7; this avoids repainting its full-screen gradient on each move. */
+body[data-performance="eco"] .ambient,body[data-performance="direct"] .ambient{transform:translateZ(0)}
+
+/* Direct mode avoids transition retargeting during rapid remote input.
+   Keep the animated profiles available, without changing the selected layout. */
+body[data-performance="direct"] .category,body[data-performance="direct"] .item,body[data-performance="direct"] .item .symbol{transition:none}

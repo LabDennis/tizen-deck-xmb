@@ -1,0 +1,11 @@
+.time-readout{display:block;padding:1.5vh 0 2vh;font-size:4vw;line-height:1.15;font-variant-numeric:tabular-nums;letter-spacing:.03em;color:#edf7ff;white-space:pre-line}
+.time-laps{padding-left:2em;margin:1.5vh 0;font-size:1.1vw;line-height:1.7;color:#bfd2e2;font-variant-numeric:tabular-nums}
+#dialog-actions label{display:block;font-size:1.1vw;color:#bfd2e2;margin-bottom:1vh}
+dialog.time-fullscreen{top:0;left:0;width:100vw;max-width:100vw;height:100vh;max-height:100vh;border:0;border-radius:0;background:#02060c;padding:8vh 8vw}
+dialog.time-fullscreen h2{font-size:1.4vw;color:#8c9dad;font-weight:400}
+dialog.time-fullscreen p{font-size:1vw;color:#718293}
+dialog.time-fullscreen #dialog-actions{display:flex;align-items:center;justify-content:center;max-height:none;text-align:center;overflow:hidden}
+dialog.time-fullscreen .time-readout{color:#c7d5e0;letter-spacing:.06em}
+.time-date{display:block;font-size:2vw;color:#8c9dad;margin-bottom:2vh}
+.time-digits{display:block;font-size:10vw;font-weight:300;line-height:1.1}
+dialog.time-fullscreen #close{align-self:flex-end;font-size:1vw;background:#0c1822;color:#aabfce;box-shadow:none}

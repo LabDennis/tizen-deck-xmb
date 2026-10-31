@@ -1,0 +1,31 @@
+const {chromium}=require('playwright'),{pathToFileURL}=require('url'),path=require('path'),assert=require('node:assert/strict');
+(async()=>{const browser=await chromium.launch({headless:true,executablePath:process.env.BROWSER_BIN});try{
+ const page=await browser.newPage({viewport:{width:1920,height:1080}});const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.addInitScript(()=>{
+  window.launched=[];window.sourceChanges=[];window.cleanups=[];
+  const source={type:'HDMI',number:2,signal:false};
+  window.tizen={application:{launch:(id,ok)=>{launched.push(id);ok();}},systeminfo:{getPropertyValue:(name,ok,fail)=>name==='VIDEOSOURCE'?ok({connected:[{type:'HDMI',number:1}],disconnected:[source]}):fail&&fail({name:'NotSupportedError'})},tvwindow:{getSource:()=>source,setSource:(s,ok)=>{sourceChanges.push(s);setTimeout(()=>ok(s),window.sourceDelay||0);}}};
+  window.XMLHttpRequest=function(){this.open=(m,u)=>{this.url=u;};this.setRequestHeader=()=>{};this.abort=()=>{};this.send=body=>{if(this.url.endsWith('/apps/cleanup'))cleanups.push(JSON.parse(body));this.status=200;this.responseText=JSON.stringify({closed:['org.tizen.browser'],failed:[]});setTimeout(()=>this.onload(),0);};};
+ });
+ await page.goto(pathToFileURL(path.resolve(__dirname,'../src/index.html')).href);
+ await page.evaluate(()=>{window.DECK_DEVICE={url:'http://127.0.0.1:8844',token:'test'};});
+ await page.getByRole('button',{name:'Remote',exact:true}).click();await page.getByRole('button',{name:'Eingänge',exact:true}).click();
+ assert.match(await page.locator('#dialog-text').innerText(),/Gemeldete Anschlüsse/);
+ const close=await page.locator('#close').boundingBox();assert(close.y+close.height<=1080,'close button stays on screen');
+ assert.equal(await page.locator('#dialog-actions button').first().evaluate(e=>getComputedStyle(e).color),'rgb(255, 255, 255)');
+ const connected=page.getByRole('button',{name:'HDMI 1 — verbunden',exact:true});assert.equal(await connected.count(),1);
+ assert.equal(await page.getByRole('button',{name:'● HDMI 2 — nicht verbunden · kein Signal',exact:true}).count(),1);
+ await page.getByRole('button',{name:'Gerätenamen bearbeiten',exact:true}).click();await page.getByRole('textbox',{name:'HDMI 1 Gerätename',exact:true}).fill('Gaming-PC');await page.getByRole('button',{name:'Namen speichern',exact:true}).click();
+ assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('inputNames'))['HDMI:1']),'Gaming-PC');
+ await page.keyboard.press('ArrowDown');await page.keyboard.press('ArrowUp');
+ await page.keyboard.press('Enter');await page.waitForFunction(()=>launched.includes('org.tizen.tv-viewer'));
+ assert.equal(await page.locator('dialog').evaluate(e=>e.open),false);assert.equal(await page.evaluate(()=>sourceChanges[0].number),1);
+ assert.equal(await page.evaluate(()=>cleanups.at(-1).keep),'org.tizen.tv-viewer');
+ await page.getByRole('button',{name:'Eingänge',exact:true}).click();
+ await page.evaluate(()=>window.sourceDelay=120);await page.getByRole('button',{name:'HDMI 1 · Gaming-PC — verbunden',exact:true}).click();await page.waitForFunction(()=>sourceChanges.length===2);await page.keyboard.press('Escape');await page.waitForTimeout(180);
+ assert.equal(await page.evaluate(()=>launched.length),1,'no late viewer launch after dismissing dialog');
+ await page.getByRole('button',{name:'Einstellungen',exact:true}).click();for(let i=0;i<4;i++)await page.keyboard.press('ArrowDown');await page.keyboard.press('Enter');await page.getByRole('button',{name:'Apps im Hintergrund',exact:true}).click();
+ await page.getByRole('button',{name:'Automatisch schließen: Ein',exact:true}).click();assert.equal(await page.evaluate(()=>localStorage.getItem('autoCloseApps')),'false');await page.keyboard.press('Escape');
+ await page.keyboard.press('Escape');const before=await page.evaluate(()=>cleanups.length);await page.getByRole('button',{name:'Medien',exact:true}).click();await page.getByRole('button',{name:/^Plex/}).click();await page.waitForFunction(()=>launched.includes('kIciSQlYEM.plex'));assert.equal(await page.evaluate(()=>cleanups.length),before,'off must retain background apps');
+ assert.deepEqual(errors,[]);console.log('Inputs: reported ports/status, aliases, remote keys, source/viewer switch, late-callback cancel and app policy toggle passed');
+}finally{await browser.close();}})().catch(e=>{console.error(e);process.exitCode=1;});

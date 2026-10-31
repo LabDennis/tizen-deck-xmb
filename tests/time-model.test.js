@@ -1,0 +1,6 @@
+const assert=require('node:assert/strict'),Time=require('../src/time-model.js');let wall=1000000,steady=500;const m=new Time(()=>wall,()=>steady);
+m.toggleWatch();steady+=4567;wall-=200000;assert.equal(m.elapsed(),4567,'clock adjustment cannot alter stopwatch');m.lap();m.toggleWatch();steady+=5000;assert.equal(m.elapsed(),4567);m.toggleWatch();steady+=1000;assert.equal(m.elapsed(),5567);for(let i=0;i<9;i++){steady+=100;m.lap();}assert.equal(m.laps.length,5);m.resetWatch();assert.equal(m.elapsed(),0);
+m.start(60);wall+=15000;assert.equal(m.left(),45000);m.pause();wall+=50000;assert.equal(m.left(),45000);m.resume();wall+=45000;assert.equal(m.check(),true);assert.equal(m.check(),false,'completion only once');
+m.start(120);const saved=m.save();const n=new Time(()=>wall,()=>steady);assert(n.restore(saved));wall+=130000;assert(n.check());assert(!n.check());assert(!n.restore('{'));assert(!n.restore(JSON.stringify({version:1,countdown:{phase:'running',deadline:wall+86400001,remaining:5000,duration:5000}})));
+for(const value of [0,-1,NaN,Infinity,1.5,86401])assert.throws(()=>m.start(value));
+assert.equal(Time.format(3661456,true),'01:01:01.4');assert.equal(Time.format(65000,false),'01:05');console.log('Time model: monotonic stopwatch, five laps, pause/resume, bounded persistence and one-shot countdown completion passed');

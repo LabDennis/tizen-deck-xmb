@@ -1,0 +1,15 @@
+const assert=require('node:assert/strict'),Scores=require('../src/flappy-scores');
+let data={},storage={getItem:k=>data[k]||null,setItem:(k,v)=>{data[k]=v;}};
+let scores=new Scores(storage);assert.deepEqual(scores.entries(),[]);
+for(let i=0;i<15;i++)scores.add(i,1000+i);
+assert.deepEqual(scores.entries().map(r=>r.score),[14,13,12,11,10,9,8,7,6,5]);
+assert.deepEqual(new Scores(storage).entries(),scores.entries(),'reload preserves real rows');
+scores.add(14,2000);assert.equal(scores.entries()[0].at,2000,'newer equal score sorts first');
+let copy=scores.entries();copy[0].score=999;assert.equal(scores.entries()[0].score,14);
+scores.add(NaN,2000);scores.add(-1,2000);scores.add(1,Infinity);assert.equal(scores.entries().length,10);
+data['flappySmasnug.scores.v1']='[{"score":"999","at":0},{"score":3,"at":1000},{"score":5,"at":null}]';
+assert.deepEqual(new Scores(storage).entries(),[{score:3,at:1000}]);
+data['flappySmasnug.scores.v1']='broken';assert.deepEqual(new Scores(storage).entries(),[]);
+scores=new Scores({getItem:()=>null,setItem:()=>{throw Error('quota');}});scores.add(0,2000);
+assert.equal(scores.saved,false);assert.deepEqual(scores.entries(),[{score:0,at:2000}]);
+console.log('Scoreboard: top ten, ordering, persistence, invalid data and unavailable storage passed');
