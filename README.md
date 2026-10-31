@@ -5,7 +5,7 @@ Jellyfin, YouTube und Moonlight, verwalte Favoriten und bediene den TV mit
 Fernbedienung, Tastatur oder Controller. Mit Menütönen, verschiedenen
 Leistungsprofilen, Uhr, Timer und dem kleinen Spiel Flappy Smasnug.
 
-**Version 1.0**
+**Version 1.0 · Zum Großteil mit OpenAI Codex gevibecodet.**
 
 ## Screenshots
 
